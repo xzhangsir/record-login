@@ -14,7 +14,7 @@
           <el-col :span="6" :offset="6">
             <el-button
               type="primary"
-              :icon="Delete"
+              :icon="Plus"
               @click="typeDrawer = true"
               circle
             ></el-button>
@@ -34,7 +34,7 @@
               <el-button
                 type="primary"
                 style="float: right"
-                :icon="Delete"
+                :icon="Plus"
                 @click="addInfo(key)"
                 circle
               ></el-button>
@@ -64,7 +64,7 @@
                 <el-col :span="6" v-if="index === 0">
                   <el-button
                     type="primary"
-                    :icon="Delete"
+                    :icon="Plus"
                     @click="addInfo(key)"
                     circle
                   ></el-button>
@@ -135,15 +135,7 @@
 import { onMounted, ref, reactive, toRefs, defineProps, watch } from 'vue'
 import { setItem, getItem } from '@/utils/storage.js'
 import { ElMessage } from 'element-plus'
-import {
-  Check,
-  Delete,
-  Edit,
-  Message,
-  Search,
-  Star,
-  Plus
-} from '@element-plus/icons-vue'
+import { Delete, Plus } from '@element-plus/icons-vue'
 // const { shell } = window.electron
 const props = defineProps({
   mylog: Object
@@ -166,11 +158,11 @@ const infoState = reactive({
   }
 })
 let tabsInfo = reactive({
-  lists: getItem(Object.keys(props.mylog)[0]) || {}
+  lists: getItem(Object.keys(props.mylog || {})[0]) || {}
 })
 onMounted(() => {
-  // console.log(props.mylog)
-  // console.log(tabsInfo)
+  console.log(props.mylog)
+  console.log(tabsInfo)
 })
 watch(
   () => activeName.value,
@@ -204,7 +196,8 @@ const submit = () => {
   }
 }
 const submitInfo = () => {
-  if (infoState.infoForm.username && infoState.infoForm.pwd) {
+  //if (infoState.infoForm.username && infoState.infoForm.pwd) {
+  if (infoState.infoForm.username) {
     let temp = getItem(activeName.value)
     temp[infoName.value].push(infoState.infoForm)
     setItem(activeName.value, temp)

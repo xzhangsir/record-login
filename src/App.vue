@@ -3,7 +3,7 @@
     <el-col :span="6">
       <el-button
         type="primary"
-        :icon="Delete"
+        :icon="Plus"
         @click="drawer = true"
         circle
       ></el-button>
@@ -12,7 +12,7 @@
       <el-button type="danger" :icon="Delete" @click="clear" circle></el-button>
     </el-col>
   </el-row>
-  <Main :mylog="mylog" />
+  <Main :mylog="state.mylog" />
   <DrawerInput :drawer="drawer" @close="close" @getLogItem="getLogItem" />
 </template>
 
@@ -20,21 +20,14 @@
 import Main from './components/main.vue'
 import DrawerInput from './components/drawerInput.vue'
 import { getItem, clearStorage } from '@/utils/storage.js'
-import { ref, reactive, toRefs } from 'vue'
-import {
-  Check,
-  Delete,
-  Edit,
-  Message,
-  Search,
-  Star,
-  Plus
-} from '@element-plus/icons-vue'
+import { ref, reactive } from 'vue'
+import { Delete, Plus } from '@element-plus/icons-vue'
 
 const drawer = ref(false)
 const state = reactive({
   mylog: getItem('mylog') || {}
 })
+console.log('state.mylog', state.mylog)
 const close = () => {
   drawer.value = false
 }
