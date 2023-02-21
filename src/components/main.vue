@@ -15,7 +15,7 @@
             <el-button
               type="danger"
               :icon="Delete"
-              @dblclick="clear"
+              @dblclick="delProject(value.name)"
               circle
             ></el-button>
             <el-button
@@ -31,11 +31,15 @@
           </el-col> -->
         </el-row>
         <el-tabs type="border-card" v-if="Object.keys(tabsInfo.lists).length">
-          <el-tab-pane
-            v-for="(val, key) in tabsInfo.lists"
-            :label="key"
-            :key="key"
-          >
+          <el-tab-pane v-for="(val, key) in tabsInfo.lists" :key="key">
+            <template #label>
+              <span
+                class="custom-tabs-label"
+                :draggable="true"
+                @dragstart="dragstart(value.name, key)"
+                >{{ key }}</span
+              >
+            </template>
             <template v-if="val.length === 0">
               <el-button
                 type="primary"
@@ -46,7 +50,13 @@
               ></el-button>
             </template>
             <template v-else>
-              <el-row :gutter="20" v-for="(item, index) in val" :key="index">
+              <el-row
+                :gutter="20"
+                v-for="(item, index) in val"
+                :key="index"
+                :draggable="true"
+                @dragstart="dragstart(value.name, key, index)"
+              >
                 <el-col :span="6">
                   用户名：
                   <span @click="copyText(item.username)" class="pointer">{{
@@ -58,14 +68,6 @@
                   <span @click="copyText(item.pwd)" class="pointer">{{
                     item.pwd
                   }}</span>
-                </el-col>
-                <el-col :span="6">
-                  <el-button
-                    type="danger"
-                    :icon="Delete"
-                    @dblclick="delInfo(key, index)"
-                    circle
-                  ></el-button>
                 </el-col>
                 <el-col :span="6" v-if="index === 0">
                   <el-button
@@ -145,6 +147,7 @@ import { Delete, Plus } from '@element-plus/icons-vue'
 const props = defineProps({
   mylog: Object
 })
+const emit = defineEmits(['del'])
 const activeName = ref()
 const infoName = ref()
 const typeDrawer = ref(false)
@@ -163,37 +166,58 @@ const infoState = reactive({
   }
 })
 let tabsInfo = reactive({
-  lists: getItem(Object.keys(props.mylog || {})[0]) || {}
-})
-onMounted(() => {
-  console.log(props.mylog)
-  console.log(tabsInfo)
+  lists: {}
 })
 watch(
   () => activeName.value,
   (newVal) => {
-    tabsInfo.lists = getItem(newVal) || {}
+    if (newVal) {
+      let { name, url, ...data } = getItem('mylog')[newVal]
+      tabsInfo.lists = data || {}
+    }
+  }
+)
+watch(
+  () => props.mylog,
+  () => {
+    if (activeName.value && getItem('mylog')) {
+      let temp = getItem('mylog')[activeName.value]
+      if (temp) {
+        let { name, url, ...data } = temp
+        tabsInfo.lists = data || {}
+      } else {
+        tabsInfo.lists = {}
+      }
+    }
   }
 )
 const addInfo = (key) => {
   infoDrawer.value = true
   infoName.value = key
 }
-const delInfo = (key, index) => {
-  let temp = getItem(activeName.value)
-  temp[key].splice(index, 1)
-  setItem(activeName.value, temp)
-  tabsInfo.lists = getItem(activeName.value)
+
+const dragstart = (project, key, index) => {
+  emit('del', project, key, index)
 }
+
+const delProject = (project) => {
+  emit('del', project)
+}
+
 const submit = () => {
   if (typeState.form.type) {
-    if (!getItem(typeState.form.type)) {
-      setItem(activeName.value, {
-        ...getItem(activeName.value),
-        [typeState.form.type]: []
+    let mylog = getItem('mylog')
+    if (!mylog[activeName.value][typeState.form.type]) {
+      setItem('mylog', {
+        ...mylog,
+        [activeName.value]: {
+          ...mylog[activeName.value],
+          [typeState.form.type]: []
+        }
       })
     }
-    tabsInfo.lists = getItem(activeName.value)
+    let { name, url, ...data } = getItem('mylog')[activeName.value]
+    tabsInfo.lists = data
     resetForm()
     typeDrawer.value = false
   } else {
@@ -203,10 +227,15 @@ const submit = () => {
 const submitInfo = () => {
   //if (infoState.infoForm.username && infoState.infoForm.pwd) {
   if (infoState.infoForm.username) {
-    let temp = getItem(activeName.value)
+    let mylog = getItem('mylog')
+    let temp = mylog[activeName.value]
     temp[infoName.value].push(infoState.infoForm)
-    setItem(activeName.value, temp)
-    tabsInfo.lists = getItem(activeName.value)
+    setItem('mylog', {
+      ...mylog,
+      [activeName.value]: temp
+    })
+    let { name, url, ...data } = getItem('mylog')[activeName.value]
+    tabsInfo.lists = data
     resetForm()
     infoDrawer.value = false
   } else {
@@ -221,10 +250,6 @@ const copyText = (text) => {
   document.execCommand('Copy')
   tempInput.remove()
 }
-// const openExternal = href => {
-//   // shell.openExternal(href)
-//   window.open(href)
-// }
 
 function resetForm() {
   typeState.form = {
