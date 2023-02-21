@@ -1,15 +1,16 @@
 <template>
   <el-row>
     <el-col :span="6">
-      <el-button
-        type="primary"
-        :icon="Plus"
-        @click="drawer = true"
-        circle
-      ></el-button>
+      <el-button type="primary" :icon="Plus" @click="drawer = true" circle>
+      </el-button>
     </el-col>
     <el-col :span="6" :offset="12">
-      <el-button type="danger" :icon="Delete" @click="clear" circle></el-button>
+      <el-button
+        type="danger"
+        :icon="Delete"
+        @dblclick="clear"
+        circle
+      ></el-button>
     </el-col>
   </el-row>
   <Main :mylog="state.mylog" />
@@ -20,7 +21,6 @@
 import Main from './components/main.vue'
 import DrawerInput from './components/drawerInput.vue'
 import { getItem, clearStorage } from '@/utils/storage.js'
-import { ref, reactive } from 'vue'
 import { Delete, Plus } from '@element-plus/icons-vue'
 
 const drawer = ref(false)

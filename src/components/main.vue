@@ -13,6 +13,12 @@
           </el-col>
           <el-col :span="6" :offset="6">
             <el-button
+              type="danger"
+              :icon="Delete"
+              @dblclick="clear"
+              circle
+            ></el-button>
+            <el-button
               type="primary"
               :icon="Plus"
               @click="typeDrawer = true"
@@ -57,7 +63,7 @@
                   <el-button
                     type="danger"
                     :icon="Delete"
-                    @click="delInfo(key, index)"
+                    @dblclick="delInfo(key, index)"
                     circle
                   ></el-button>
                 </el-col>
@@ -132,7 +138,6 @@
 </template>
 
 <script setup>
-import { onMounted, ref, reactive, toRefs, defineProps, watch } from 'vue'
 import { setItem, getItem } from '@/utils/storage.js'
 import { ElMessage } from 'element-plus'
 import { Delete, Plus } from '@element-plus/icons-vue'
