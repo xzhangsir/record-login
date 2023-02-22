@@ -10,9 +10,9 @@ const createWindow = () => {
     width: 800,
     height: 600,
     webPreferences: {
-      // devTools: true,
-      // contextIsolation: false,
-      // nodeIntegration: true
+      devTools: true,
+      contextIsolation: false,
+      nodeIntegration: true,
       preload: path.join(__dirname, 'preload.js')
     }
   })
@@ -20,6 +20,7 @@ const createWindow = () => {
   mainWindow.loadFile(path.join(__dirname, '../dist/index.html'))
   // 打开开发工具
   // mainWindow.webContents.openDevTools()
+  mainWindow.setMenu(null)
 }
 // 这段程序将会在 Electron 结束初始化
 // 和创建浏览器窗口的时候调用
