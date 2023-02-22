@@ -1,8 +1,7 @@
 <template>
   <el-row>
     <el-col :span="6">
-      <el-button type="primary" :icon="Plus" @click="drawer = true" circle>
-      </el-button>
+      <el-button type="primary" :icon="Plus" @click="drawer = true" circle />
     </el-col>
     <el-col :span="6" :offset="12">
       <el-button

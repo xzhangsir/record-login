@@ -23,7 +23,6 @@
 </template>
 <script setup>
 import { setItem, getItem } from '@/utils/storage.js'
-import { ElMessage } from 'element-plus'
 const props = defineProps({
   drawer: Boolean
 })

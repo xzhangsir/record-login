@@ -141,7 +141,6 @@
 
 <script setup>
 import { setItem, getItem } from '@/utils/storage.js'
-import { ElMessage } from 'element-plus'
 import { Delete, Plus } from '@element-plus/icons-vue'
 // const { shell } = window.electron
 const props = defineProps({
